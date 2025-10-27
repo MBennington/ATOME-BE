@@ -1,0 +1,2727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATOME Data Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #343a40;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #ffffff;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #e9ecef;
+            font-size: 1.1rem;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background: #ffffff;
+        }
+
+        .section h2 {
+            color: #1a1a1a;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-icon {
+            width: 32px;
+            height: 32px;
+            background: #6c757d;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e5e7eb;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .examples {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .examples h3 {
+            color: #374151;
+            margin-bottom: 15px;
+        }
+
+        .example-code {
+            background: #f8f9fa;
+            color: #495057;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            margin-bottom: 10px;
+        }
+
+        .copy-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .copy-btn:hover {
+            background: #545b62;
+        }
+
+        /* Image Upload Styles */
+        .file-upload-area {
+            border: 2px dashed #ced4da;
+            border-radius: 6px;
+            padding: 30px;
+            text-align: center;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .file-upload-area:hover {
+            border-color: #007bff;
+            background: #e3f2fd;
+        }
+
+        .file-upload-area.dragover {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+
+        .file-upload-icon {
+            font-size: 3rem;
+            color: #9ca3af;
+            margin-bottom: 10px;
+        }
+
+        .file-upload-text {
+            color: #6b7280;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .file-upload-hint {
+            color: #9ca3af;
+            font-size: 0.9rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .image-preview {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .image-preview img {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+
+        .image-info {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 10px;
+        }
+
+        .upload-progress {
+            width: 100%;
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .upload-progress-bar {
+            height: 100%;
+            background: #28a745;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .btn-upload {
+            background: #6f42c1;
+            color: white;
+        }
+
+        .btn-upload:hover {
+            background: #5a32a3;
+        }
+
+        .btn-remove {
+            background: #fd7e14;
+            color: white;
+        }
+
+        .btn-remove:hover {
+            background: #e8590c;
+        }
+
+        /* Login Section Styles */
+        .login-section {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+
+        .login-form {
+            display: grid;
+            gap: 20px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-input {
+            padding: 12px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+        }
+
+        .form-label {
+            color: #374151;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .btn-login {
+            background: #007bff;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .btn-login:hover {
+            background: #0056b3;
+        }
+
+        .btn-logout {
+            background: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+        }
+
+        .btn-logout:hover {
+            background: #545b62;
+        }
+
+        .user-info {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .user-info h4 {
+            color: #155724;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-details {
+            color: #155724;
+            font-size: 0.9rem;
+        }
+
+        .login-toggle {
+            background: #6f42c1;
+            color: white;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .login-toggle:hover {
+            background: #5a32a3;
+        }
+
+        /* Habit Dashboard Styles */
+        .dashboard-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .habits-dashboard {
+            min-height: 400px;
+        }
+
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .loading-container p {
+            margin-top: 15px;
+            color: #6b7280;
+            font-size: 1rem;
+        }
+
+        .habits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .habits-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .habit-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .habit-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .habit-card.grid-view {
+            aspect-ratio: 2/3;
+        }
+
+        .habit-card.list-view {
+            display: flex;
+            flex-direction: row;
+            height: 120px;
+        }
+
+        .habit-image-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .habit-card.grid-view .habit-image-container {
+            width: 100%;
+            height: 70%;
+        }
+
+        .habit-card.list-view .habit-image-container {
+            width: 120px;
+            height: 100%;
+            flex-shrink: 0;
+        }
+
+        .habit-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .habit-card:hover .habit-image {
+            transform: scale(1.05);
+        }
+
+        .habit-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.7) 100%);
+            display: flex;
+            align-items: flex-end;
+            padding: 15px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .habit-card:hover .habit-overlay {
+            opacity: 1;
+        }
+
+        .habit-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 16px;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-edit {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #0056b3;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+
+        .btn-view {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #1e7e34;
+        }
+
+        .btn-restore {
+            background: #6f42c1;
+            color: white;
+        }
+
+        .btn-restore:hover {
+            background: #5a32a3;
+        }
+
+        .btn-hard-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-hard-delete:hover {
+            background: #c82333;
+        }
+
+        .delete-options {
+            display: flex;
+            gap: 4px;
+        }
+
+        .inactive-habit {
+            opacity: 0.7;
+            border: 1px solid #dee2e6;
+        }
+
+        .inactive-habit .habit-image {
+            filter: grayscale(50%);
+        }
+
+        .status-badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 8px;
+        }
+
+        .status-badge.active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .warning-box {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .warning-box h4 {
+            color: #721c24;
+            margin: 0 0 10px 0;
+        }
+
+        .warning-box ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .warning-box li {
+            margin: 5px 0;
+            color: #721c24;
+        }
+
+        .habit-to-delete {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
+
+        .confirmation-section {
+            border-top: 1px solid #dee2e6;
+            padding-top: 20px;
+        }
+
+        .confirmation-section input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+        .confirmation-section input:focus {
+            border-color: #dc3545;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.1);
+        }
+
+        .confirmation-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #c82333;
+        }
+
+        .btn-danger:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .habit-info {
+            padding: 15px;
+            flex: 1;
+        }
+
+        .habit-card.grid-view .habit-info {
+            height: 30%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .habit-card.list-view .habit-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .habit-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 5px;
+            line-height: 1.3;
+        }
+
+        .habit-card.grid-view .habit-title {
+            font-size: 1rem;
+        }
+
+        .habit-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .habit-category {
+            font-size: 0.85rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .habit-difficulty {
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            width: fit-content;
+        }
+
+        .difficulty-beginner {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .difficulty-intermediate {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .difficulty-advanced {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .habit-duration {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        .category-section {
+            margin-bottom: 40px;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .category-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .category-count {
+            font-size: 0.9rem;
+            color: #6c757d;
+            background: #f8f9fa;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-left: auto;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #495057;
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .modal-header {
+            background: #343a40;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #e9ecef;
+            padding: 5px;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255,255,255,0.1);
+            color: #ffffff;
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .modal-actions {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group-full {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .image-preview-modal {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 8px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 ATOME Data Manager</h1>
+            <p>Manage habits and tasks data for your app</p>
+        </div>
+
+        <div class="content">
+            <!-- Login Section -->
+            <div class="section login-section">
+                <h2>
+                    <span class="section-icon">🔐</span>
+                    Authentication
+                </h2>
+                
+                <div id="loginForm" class="login-form">
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email:</label>
+                        <input type="email" id="email" class="form-input" placeholder="Enter your email" required onkeypress="handleLoginKeyPress(event)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password:</label>
+                        <input type="password" id="password" class="form-input" placeholder="Enter your password" required onkeypress="handleLoginKeyPress(event)">
+                    </div>
+                    
+                    <button class="btn-login" onclick="login()">
+                        🔑 Login
+                    </button>
+                </div>
+
+                <div id="userInfo" class="user-info">
+                    <h4>
+                        <span>👤</span>
+                        <span id="userName">User</span>
+                    </h4>
+                    <div class="user-details">
+                        <div>Email: <span id="userEmail"></span></div>
+                        <div>Status: <span id="userStatus">Authenticated</span></div>
+                    </div>
+                    <button class="btn-logout" onclick="logout()" style="margin-top: 10px;">
+                        🚪 Logout
+                    </button>
+                </div>
+
+                <div id="loginStatus" class="status"></div>
+                <div id="loginLoading" class="loading">
+                    <div class="spinner"></div>
+                    <p>Authenticating...</p>
+                </div>
+            </div>
+
+            <!-- Image Upload Section -->
+            <div class="section">
+                <h2>
+                    <span class="section-icon">🖼️</span>
+                    Image Upload
+                </h2>
+                
+                <div class="file-upload-area" id="fileUploadArea" onclick="document.getElementById('fileInput').click()">
+                    <div class="file-upload-icon">📁</div>
+                    <div class="file-upload-text">Click to upload or drag and drop</div>
+                    <div class="file-upload-hint">PNG, JPG, GIF, WebP up to 10MB</div>
+                    <input type="file" id="fileInput" class="file-input" accept="image/*" onchange="handleFileSelect(event)">
+                </div>
+
+                <div class="upload-progress" id="uploadProgress">
+                    <div class="upload-progress-bar" id="uploadProgressBar"></div>
+                </div>
+
+                <div class="image-preview" id="imagePreview"></div>
+
+                <div class="button-group">
+                    <button class="btn-upload" onclick="uploadImage()" id="uploadBtn" disabled>
+                        🚀 Upload Image
+                    </button>
+                    <button class="btn-remove" onclick="removeImage()" id="removeBtn" style="display: none;">
+                        🗑️ Remove Image
+                    </button>
+                </div>
+
+                <div id="imageStatus" class="status"></div>
+                <div id="imageLoading" class="loading">
+                    <div class="spinner"></div>
+                    <p>Uploading image...</p>
+                </div>
+            </div>
+
+            <!-- Habits Section -->
+            <div class="section">
+                <h2>
+                    <span class="section-icon">📝</span>
+                    Habits Management
+                </h2>
+                
+                <div class="input-group">
+                    <label for="habitsJson">Habits JSON Data:</label>
+                    <textarea id="habitsJson" placeholder="Enter habits JSON data here..."></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="habitsVideoLink">Habits Video Link (Optional):</label>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <input type="url" id="habitsVideoLink" placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..." style="flex:1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                        <button class="btn-secondary" onclick="addHabitVideoToJson()">➕ Add to JSON</button>
+                    </div>
+                    <small style="color: #666; font-size: 12px; margin-top: 5px; display: block;">
+                        Supported platforms: YouTube, Vimeo, Dailymotion, Twitch, TikTok, Instagram, Facebook
+                    </small>
+                </div>
+
+                <div class="input-group">
+                    <label for="habitsCountries">Habits Countries (Optional):</label>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <input type="text" id="habitsCountries" placeholder="US,CA,GB (comma-separated country codes)" style="flex:1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                        <button class="btn-secondary" onclick="addHabitCountriesToJson()">➕ Add to JSON</button>
+                    </div>
+                    <small style="color: #666; font-size: 12px; margin-top: 5px; display: block;">
+                        Enter 2-letter ISO country codes (e.g., US, CA, GB). Leave empty for global collections.
+                    </small>
+                </div>
+
+                <div class="input-group">
+                    <label for="habitsSubcategories">Habits Subcategories (Optional):</label>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <input type="text" id="habitsSubcategories" placeholder="Morning Routine,Evening Routine,Weekend Activities (comma-separated)" style="flex:1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                        <button class="btn-secondary" onclick="addHabitSubcategoriesToJson()">➕ Add to JSON</button>
+                    </div>
+                    <small style="color: #666; font-size: 12px; margin-top: 5px; display: block;">
+                        Enter subcategories separated by commas (e.g., Morning Routine, Evening Routine). Each subcategory can be up to 50 characters.
+                    </small>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" onclick="addHabits()">
+                        ➕ Add Habits
+                    </button>
+                    <button class="btn-secondary" onclick="loadHabitsExample()">
+                        📋 Load Example
+                    </button>
+                    <button class="btn-secondary" onclick="loadHabitsCountryExamples()">
+                        🌍 Load Country Examples
+                    </button>
+                    <button class="btn-danger" onclick="clearHabits()">
+                        🗑️ Clear
+                    </button>
+                </div>
+
+                <div id="habitsStatus" class="status"></div>
+                <div id="habitsLoading" class="loading">
+                    <div class="spinner"></div>
+                    <p>Processing habits...</p>
+                </div>
+            </div>
+
+            <!-- Tasks Section -->
+            <div class="section">
+                <h2>
+                    <span class="section-icon">✅</span>
+                    Tasks Management
+                </h2>
+                
+                <div class="info-box" style="background: #e3f2fd; border-left: 4px solid #2196f3; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+                    <p style="margin: 0; color: #1976d2; font-size: 14px;">
+                        <strong>📅 Days Array Feature:</strong> Tasks now support an array of days instead of a single day. Use <code>"day": [1, 3, 5]</code> to make a task repeat on days 1, 3, and 5. This reduces repetition when the same task should be done on multiple days.
+                    </p>
+                </div>
+                <div class="info-box" style="background: #e8f5e8; border-left: 4px solid #4caf50; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+                    <p style="margin: 0; color: #2e7d32; font-size: 14px;">
+                        <strong>📹 Video Link Feature:</strong> You can now add video links to tasks using the <code>videoLink</code> field. 
+                        Supported platforms: YouTube, Vimeo, Dailymotion, and Twitch. The video link is optional and will be validated before saving.
+                    </p>
+                </div>
+                
+                <div class="input-group">
+                    <label for="tasksJson">Tasks JSON Data:</label>
+                    <textarea id="tasksJson" placeholder="Enter tasks JSON data here..."></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="tasksVideoLink">Tasks Video Link (Optional):</label>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <input type="url" id="tasksVideoLink" placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..." style="flex:1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                        <button class="btn-secondary" onclick="addTaskVideoToJson()">➕ Add to JSON</button>
+                    </div>
+                    <small style="color: #666; font-size: 12px; margin-top: 5px; display: block;">
+                        Supported platforms: YouTube, Vimeo, Dailymotion, Twitch, TikTok, Instagram, Facebook
+                    </small>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" onclick="addTasks()">
+                        ➕ Add Tasks
+                    </button>
+                    <button class="btn-secondary" onclick="loadTasksExample()">
+                        📋 Load Example
+                    </button>
+                    <button class="btn-secondary" onclick="loadTasksDaysArrayExample()">
+                        📅 Load Days Array Example
+                    </button>
+                    <button class="btn-secondary" onclick="createExampleHabitIfNeeded()">
+                        🏗️ Create Example Habit
+                    </button>
+                    <button class="btn-danger" onclick="clearTasks()">
+                        🗑️ Clear
+                    </button>
+                </div>
+
+                <div id="tasksStatus" class="status"></div>
+                <div id="tasksLoading" class="loading">
+                    <div class="spinner"></div>
+                    <p>Processing tasks...</p>
+                </div>
+            </div>
+
+            <!-- Habit Management Section -->
+            <div class="section">
+                <h2>
+                    <span class="section-icon">🎯</span>
+                    Habit Management Dashboard
+                </h2>
+                
+                <div class="dashboard-controls">
+                    <button class="btn-primary" onclick="loadHabitsFromDB()">
+                        🔄 Refresh Habits
+                    </button>
+                    <button class="btn-secondary" onclick="toggleViewMode()" id="viewModeBtn">
+                        📋 List View
+                    </button>
+                </div>
+
+                <div id="habitsDashboard" class="habits-dashboard">
+                    <div class="loading-container" id="habitsLoadingContainer">
+                        <div class="spinner"></div>
+                        <p>Loading habits from database...</p>
+                    </div>
+                </div>
+
+                <div id="habitsDashboardStatus" class="status"></div>
+            </div>
+
+            <!-- Examples Section -->
+            <div class="section">
+                <h2>
+                    <span class="section-icon">💡</span>
+                    Data Format Examples
+                </h2>
+                
+                <div class="examples">
+                    <h3>Habits JSON Format:</h3>
+                    <div class="example-code" id="habitsExample">
+{
+  "id": "example-habit",
+  "title": "Example Habit",
+  "description": "This is an example habit description",
+  "duration": 21,
+  "category": "Custom Category",
+  "difficulty": "beginner",
+  "image": "https://res.cloudinary.com/your-cloud/image/upload/v1234567890/atome-habits/your-uploaded-image.jpg",
+  "isActive": true,
+  "isFeatured": true,
+  "sortOrder": 0,
+  "prerequisites": [
+    "Basic understanding of the habit concept",
+    "Commitment to daily practice",
+    "Willingness to track progress"
+  ],
+  "countries": ["US", "CA", "GB"],
+  "subcategories": ["Morning Routine", "Evening Routine", "Weekend Activities"]
+}
+                    </div>
+                    <button class="copy-btn" onclick="copyToClipboard('habitsExample')">Copy</button>
+
+                    <h3>Tasks JSON Format:</h3>
+                    <div class="example-code" id="tasksExample">
+{
+  "habitId": "example-habit",
+  "id": "task-1",
+  "title": "Example Task",
+  "description": "This is an example task description",
+  "day": [1, 2, 5],
+  "week": 1,
+  "category": "work",
+  "estimatedTime": "15 minutes",
+  "executionTime": "Morning",
+  "notifyTime": "08:00",
+  "weekGoal": "Complete all daily tasks",
+  "videoLink": "https://www.youtube.com/watch?v=example"
+}
+                    </div>
+                    <button class="copy-btn" onclick="copyToClipboard('tasksExample')">Copy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Habit Modal -->
+    <div id="editHabitModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Edit Habit</h2>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editHabitForm">
+                    <div class="form-row">
+                        <div class="form-group-full">
+                            <label class="form-label" for="editHabitId">Habit ID:</label>
+                            <input type="text" id="editHabitId" class="form-input" readonly>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group-full">
+                            <label class="form-label" for="editHabitTitle">Title:</label>
+                            <input type="text" id="editHabitTitle" class="form-input" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group-full">
+                        <label class="form-label" for="editHabitDescription">Description:</label>
+                        <textarea id="editHabitDescription" class="form-textarea" required></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group-full">
+                            <label class="form-label" for="editHabitCategory">Category:</label>
+                            <select id="editHabitCategory" class="form-select" required>
+                                <option value="productivity">Productivity</option>
+                                <option value="wellness">Wellness</option>
+                                <option value="learning">Learning</option>
+                                <option value="nutrition">Nutrition</option>
+                                <option value="fitness">Fitness</option>
+                                <option value="mindfulness">Mindfulness</option>
+                            </select>
+                        </div>
+                        <div class="form-group-full">
+                            <label class="form-label" for="editHabitDifficulty">Difficulty:</label>
+                            <select id="editHabitDifficulty" class="form-select" required>
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group-full">
+                            <label class="form-label" for="editHabitDuration">Duration (days):</label>
+                            <input type="number" id="editHabitDuration" class="form-input" min="1" max="365" required>
+                        </div>
+                        <div class="form-group-full">
+                            <label class="form-label" for="editHabitSortOrder">Sort Order:</label>
+                            <input type="number" id="editHabitSortOrder" class="form-input" min="0" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group-full">
+                        <label class="form-label" for="editHabitImage">Image URL:</label>
+                        <input type="url" id="editHabitImage" class="form-input" placeholder="https://...">
+                        <img id="editHabitImagePreview" class="image-preview-modal" style="display: none;">
+                    </div>
+                    
+                    <div class="form-group-full">
+                        <label class="form-label" for="editHabitVideoLink">Video Link:</label>
+                        <input type="url" id="editHabitVideoLink" class="form-input" placeholder="https://youtube.com/watch?v=... or https://vimeo.com/...">
+                        <small class="form-help">Supported platforms: YouTube, Vimeo, Dailymotion, Twitch, TikTok, Instagram, Facebook</small>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group-full">
+                            <label>
+                                <input type="checkbox" id="editHabitIsActive" style="margin-right: 8px;">
+                                Active
+                            </label>
+                        </div>
+                        <div class="form-group-full">
+                            <label>
+                                <input type="checkbox" id="editHabitIsFeatured" style="margin-right: 8px;">
+                                Featured
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+                <button class="btn-primary" onclick="saveHabitChanges()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hard Delete Confirmation Modal -->
+    <div id="hardDeleteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⚠️ Permanent Deletion</h3>
+                <span class="close" onclick="closeHardDeleteModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="warning-box">
+                    <h4>🚨 This action cannot be undone!</h4>
+                    <p>You are about to <strong>permanently delete</strong> the habit:</p>
+                    <div class="habit-to-delete">
+                        <strong id="hardDeleteHabitTitle"></strong>
+                    </div>
+                    <p>This will:</p>
+                    <ul>
+                        <li>❌ Permanently remove the habit from the database</li>
+                        <li>❌ Delete all associated tasks</li>
+                        <li>❌ Remove the image from Cloudinary</li>
+                        <li>❌ Make this action completely irreversible</li>
+                    </ul>
+                </div>
+                <div class="confirmation-section">
+                    <p>To confirm this permanent deletion, please type the habit name exactly as shown above:</p>
+                    <input type="text" id="hardDeleteConfirmationInput" placeholder="Type habit name here..." autocomplete="off">
+                    <div class="confirmation-buttons">
+                        <button id="confirmHardDeleteBtn" class="btn btn-danger" disabled onclick="confirmHardDelete()">
+                            💥 PERMANENTLY DELETE
+                        </button>
+                        <button class="btn btn-secondary" onclick="closeHardDeleteModal()">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5000/api';
+        
+        // Global variables for image upload
+        let selectedFile = null;
+        let uploadedImageUrl = null;
+        let authToken = null;
+        let currentUser = null;
+        
+        // Storage keys
+        const TOKEN_STORAGE_KEY = 'atome_data_manager_token';
+        const USER_STORAGE_KEY = 'atome_data_manager_user';
+        
+        // Habit dashboard variables
+        let habitsData = [];
+        let categoriesData = [];
+        let currentViewMode = 'grid'; // 'grid' or 'list'
+        let editingHabit = null;
+
+        // Utility functions
+        function showStatus(elementId, message, type) {
+            const statusEl = document.getElementById(elementId);
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+            statusEl.style.display = 'block';
+            
+            setTimeout(() => {
+                statusEl.style.display = 'none';
+            }, 5000);
+        }
+
+        function handleApiError(error, elementId) {
+            console.error('API Error:', error);
+            if (error.message.includes('CORS')) {
+                showStatus(elementId, 'CORS Error: Backend server needs to be restarted to allow this origin', 'error');
+            } else if (error.message.includes('fetch failed')) {
+                showStatus(elementId, 'Connection Error: Make sure backend server is running on http://localhost:5000', 'error');
+            } else {
+                showStatus(elementId, `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function showLoading(elementId, show) {
+            const loadingEl = document.getElementById(elementId);
+            loadingEl.style.display = show ? 'block' : 'none';
+        }
+
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                showStatus('habitsStatus', 'Copied to clipboard!', 'success');
+            });
+        }
+
+        // Authentication Functions
+        async function login() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            
+            if (!email || !password) {
+                showStatus('loginStatus', 'Please enter both email and password', 'error');
+                return;
+            }
+
+            try {
+                showLoading('loginLoading', true);
+                
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const result = await response.json();
+                console.log('Login response:', result);
+
+                if (response.ok) {
+                    // Store token and user data
+                    authToken = result.data.token;
+                    currentUser = result.data.user;
+                    console.log('Stored auth data:', { authToken: !!authToken, currentUser });
+                    
+                    // Save to sessionStorage
+                    sessionStorage.setItem(TOKEN_STORAGE_KEY, authToken);
+                    sessionStorage.setItem(USER_STORAGE_KEY, JSON.stringify(currentUser));
+                    
+                    // Update UI
+                    showUserInfo();
+                    showStatus('loginStatus', `Welcome back, ${currentUser.name || currentUser.email}!`, 'success');
+                    
+                    // Clear form
+                    document.getElementById('email').value = '';
+                    document.getElementById('password').value = '';
+                } else {
+                    showStatus('loginStatus', `Login failed: ${result.message || 'Invalid credentials'}`, 'error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                if (error.message.includes('CORS')) {
+                    showStatus('loginStatus', 'CORS Error: Backend server needs to be restarted to allow this origin', 'error');
+                } else if (error.message.includes('fetch failed')) {
+                    showStatus('loginStatus', 'Connection Error: Make sure backend server is running on http://localhost:5000', 'error');
+                } else {
+                    showStatus('loginStatus', `Login Error: ${error.message}`, 'error');
+                }
+            } finally {
+                showLoading('loginLoading', false);
+            }
+        }
+
+        function logout() {
+            // Clear stored data
+            sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+            sessionStorage.removeItem(USER_STORAGE_KEY);
+            
+            // Clear global variables
+            authToken = null;
+            currentUser = null;
+            
+            // Update UI
+            showLoginForm();
+            showStatus('loginStatus', 'Logged out successfully', 'info');
+        }
+
+        function showUserInfo() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('userInfo').style.display = 'block';
+            
+            if (currentUser) {
+                document.getElementById('userName').textContent = currentUser.name || currentUser.email;
+                document.getElementById('userEmail').textContent = currentUser.email;
+            }
+        }
+
+        function showLoginForm() {
+            document.getElementById('loginForm').style.display = 'grid';
+            document.getElementById('userInfo').style.display = 'none';
+        }
+
+        function loadStoredAuth() {
+            const storedToken = sessionStorage.getItem(TOKEN_STORAGE_KEY);
+            const storedUser = sessionStorage.getItem(USER_STORAGE_KEY);
+            
+            console.log('Loading stored auth:', { hasToken: !!storedToken, hasUser: !!storedUser });
+            
+            if (storedToken && storedUser) {
+                try {
+                    authToken = storedToken;
+                    currentUser = JSON.parse(storedUser);
+                    console.log('Loaded user:', currentUser);
+                    showUserInfo();
+                } catch (error) {
+                    console.error('Error loading stored auth:', error);
+                    // Clear invalid stored data
+                    sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+                    sessionStorage.removeItem(USER_STORAGE_KEY);
+                }
+            }
+        }
+
+        // Handle Enter key in login form
+        function handleLoginKeyPress(event) {
+            if (event.key === 'Enter') {
+                login();
+            }
+        }
+
+        // Image Upload Functions
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                validateAndPreviewFile(file);
+            }
+        }
+
+        function validateAndPreviewFile(file) {
+            // Validate file type
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
+            if (!allowedTypes.includes(file.type)) {
+                showStatus('imageStatus', 'Invalid file type. Please select an image file (JPEG, PNG, GIF, WebP, SVG).', 'error');
+                return;
+            }
+
+            // Validate file size (10MB limit)
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            if (file.size > maxSize) {
+                showStatus('imageStatus', 'File too large. Please select an image smaller than 10MB.', 'error');
+                return;
+            }
+
+            selectedFile = file;
+            
+            // Preview image
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('imagePreview');
+                preview.innerHTML = `
+                    <img src="${e.target.result}" alt="Preview">
+                    <div class="image-info">
+                        <strong>${file.name}</strong><br>
+                        Size: ${(file.size / 1024 / 1024).toFixed(2)} MB<br>
+                        Type: ${file.type}
+                    </div>
+                `;
+                
+                document.getElementById('uploadBtn').disabled = false;
+                showStatus('imageStatus', 'File selected. Click "Upload Image" to upload to Cloudinary.', 'info');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function uploadImage() {
+            if (!selectedFile) {
+                showStatus('imageStatus', 'Please select a file first.', 'error');
+                return;
+            }
+
+            // Check if we have auth token
+            console.log('Upload check - authToken:', !!authToken, 'currentUser:', !!currentUser);
+            if (!authToken) {
+                showStatus('imageStatus', 'Please login first to upload images.', 'error');
+                return;
+            }
+
+            try {
+                showLoading('imageLoading', true);
+                document.getElementById('uploadProgress').style.display = 'block';
+                
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+                formData.append('folder', 'atome-habits');
+                formData.append('tags', 'habit,atome,data-manager');
+
+                const response = await fetch(`${API_BASE_URL}/assets/upload`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    uploadedImageUrl = result.data.secure_url;
+                    showStatus('imageStatus', 'Image uploaded successfully! URL copied to habit example.', 'success');
+                    
+                    // Update the habit example with the uploaded image URL
+                    updateHabitExampleWithImage(uploadedImageUrl);
+                    
+                    // Show remove button
+                    document.getElementById('removeBtn').style.display = 'inline-flex';
+                    document.getElementById('uploadBtn').disabled = true;
+                } else {
+                    showStatus('imageStatus', `Upload failed: ${result.message || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                if (error.message.includes('CORS')) {
+                    showStatus('imageStatus', 'CORS Error: Backend server needs to be restarted to allow this origin', 'error');
+                } else if (error.message.includes('fetch failed')) {
+                    showStatus('imageStatus', 'Connection Error: Make sure backend server is running on http://localhost:5000', 'error');
+                } else {
+                    showStatus('imageStatus', `Upload Error: ${error.message}`, 'error');
+                }
+            } finally {
+                showLoading('imageLoading', false);
+                document.getElementById('uploadProgress').style.display = 'none';
+            }
+        }
+
+        function removeImage() {
+            selectedFile = null;
+            uploadedImageUrl = null;
+            document.getElementById('imagePreview').innerHTML = '';
+            document.getElementById('uploadBtn').disabled = true;
+            document.getElementById('removeBtn').style.display = 'none';
+            document.getElementById('fileInput').value = '';
+            showStatus('imageStatus', 'Image removed. You can select a new image.', 'info');
+        }
+
+        function updateHabitExampleWithImage(imageUrl) {
+            // Update the habit example in the textarea if it exists
+            const habitsTextarea = document.getElementById('habitsJson');
+            if (habitsTextarea.value.trim()) {
+                try {
+                    const habitData = JSON.parse(habitsTextarea.value);
+                    if (habitData && typeof habitData === 'object') {
+                        habitData.image = imageUrl;
+                        habitsTextarea.value = JSON.stringify(habitData, null, 2);
+                        showStatus('habitsStatus', 'Habit example updated with uploaded image URL!', 'success');
+                    }
+                } catch (e) {
+                    // If JSON is invalid, just show the URL
+                    showStatus('imageStatus', `Image URL: ${imageUrl}`, 'info');
+                }
+            } else {
+                // If no habit data, show the URL for manual copy
+                showStatus('imageStatus', `Image URL: ${imageUrl}`, 'info');
+            }
+        }
+
+        // Drag and drop functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadArea = document.getElementById('fileUploadArea');
+            
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+            
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+            });
+            
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    validateAndPreviewFile(files[0]);
+                }
+            });
+        });
+
+        // Habits functions
+        async function addHabits() {
+            const habitsJson = document.getElementById('habitsJson').value.trim();
+            const videoLink = document.getElementById('habitsVideoLink').value.trim();
+            const countriesInput = document.getElementById('habitsCountries').value.trim();
+            const subcategoriesInput = document.getElementById('habitsSubcategories').value.trim();
+            
+            if (!habitsJson) {
+                showStatus('habitsStatus', 'Please enter habits JSON data', 'error');
+                return;
+            }
+
+            // Validate video link if provided
+            if (videoLink && !isValidVideoUrl(videoLink)) {
+                showStatus('habitsStatus', 'Invalid video URL format', 'error');
+                return;
+            }
+
+            // Validate countries if provided
+            let countries = [];
+            if (countriesInput) {
+                countries = countriesInput.split(',').map(code => code.trim().toUpperCase());
+                if (!countries.every(code => /^[A-Z]{2}$/.test(code))) {
+                    showStatus('habitsStatus', 'Invalid country codes. Must be 2-letter ISO codes (e.g., US, CA, GB)', 'error');
+                    return;
+                }
+            }
+
+            // Validate subcategories if provided
+            let subcategories = [];
+            if (subcategoriesInput) {
+                subcategories = subcategoriesInput.split(',').map(subcat => subcat.trim());
+                if (!subcategories.every(subcat => subcat.length > 0 && subcat.length <= 50)) {
+                    showStatus('habitsStatus', 'Invalid subcategories. Each subcategory must be between 1 and 50 characters', 'error');
+                    return;
+                }
+            }
+
+            try {
+                showLoading('habitsLoading', true);
+                
+                // Parse JSON to validate
+                const habits = JSON.parse(habitsJson);
+                
+                // If single habit, wrap in array
+                const habitsArray = Array.isArray(habits) ? habits : [habits];
+                
+                // Add video link to all habits if provided
+                if (videoLink) {
+                    habitsArray.forEach(habit => {
+                        habit.videoLink = videoLink;
+                    });
+                }
+                
+                // Add countries to all habits if provided
+                if (countries.length > 0) {
+                    habitsArray.forEach(habit => {
+                        habit.countries = countries;
+                    });
+                }
+                
+                // Add subcategories to all habits if provided
+                if (subcategories.length > 0) {
+                    habitsArray.forEach(habit => {
+                        habit.subcategories = subcategories;
+                    });
+                }
+                
+                // Send to API
+                const response = await fetch(`${API_BASE_URL}/habits/bulk`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ habits: habitsArray })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showStatus('habitsStatus', `Successfully added ${habitsArray.length} habit(s)`, 'success');
+                } else {
+                    showStatus('habitsStatus', `Error: ${result.message || 'Failed to add habits'}`, 'error');
+                }
+            } catch (error) {
+                if (error instanceof SyntaxError) {
+                    showStatus('habitsStatus', 'Invalid JSON format. Please check your syntax.', 'error');
+                } else {
+                    handleApiError(error, 'habitsStatus');
+                }
+            } finally {
+                showLoading('habitsLoading', false);
+            }
+        }
+
+        function loadHabitsExample() {
+            const exampleData = {
+                "id": "example-habit",
+                "title": "Example Habit",
+                "description": "This is an example habit description",
+                "duration": 21,
+                "category": "Custom Category",
+                "difficulty": "beginner",
+                "image": uploadedImageUrl || "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=600&fit=crop",
+                "isActive": true,
+                "isFeatured": true,
+                "sortOrder": 0,
+                "prerequisites": [
+                    "Basic understanding of the habit concept",
+                    "Commitment to daily practice",
+                    "Willingness to track progress"
+                ],
+                "countries": ["US", "CA", "GB"],
+                "subcategories": ["Morning Routine", "Evening Routine", "Weekend Activities"]
+            };
+
+            document.getElementById('habitsJson').value = JSON.stringify(exampleData, null, 2);
+        }
+
+        function loadHabitsCountryExamples() {
+            const exampleData = [
+                {
+                    "id": "global-meditation",
+                    "title": "Global Meditation Practice",
+                    "description": "A meditation habit available worldwide",
+                    "duration": 21,
+                    "category": "Mind & Wellbeing",
+                    "difficulty": "beginner",
+                    "image": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=600&fit=crop",
+                    "isActive": true,
+                    "isFeatured": true,
+                    "sortOrder": 0,
+                    "prerequisites": ["Quiet space", "5-10 minutes daily"],
+                    "countries": []
+                },
+                {
+                    "id": "us-fitness-challenge",
+                    "title": "US Fitness Challenge",
+                    "description": "A fitness program designed specifically for US users",
+                    "duration": 30,
+                    "category": "Health & Fitness",
+                    "difficulty": "intermediate",
+                    "image": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=600&fit=crop",
+                    "isActive": true,
+                    "isFeatured": false,
+                    "sortOrder": 1,
+                    "prerequisites": ["Access to gym or home equipment"],
+                    "countries": ["US"]
+                },
+                {
+                    "id": "african-wellness",
+                    "title": "African Wellness Journey",
+                    "description": "Wellness practices tailored for African countries",
+                    "duration": 28,
+                    "category": "Health & Fitness",
+                    "difficulty": "beginner",
+                    "image": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=600&fit=crop",
+                    "isActive": true,
+                    "isFeatured": false,
+                    "sortOrder": 2,
+                    "prerequisites": ["Open space for movement"],
+                    "countries": ["NG", "KE", "ZA", "GH", "EG"]
+                }
+            ];
+
+            document.getElementById('habitsJson').value = JSON.stringify(exampleData, null, 2);
+            showStatus('habitsStatus', 'Country examples loaded - includes global, US-specific, and African countries', 'success');
+        }
+
+        function clearHabits() {
+            document.getElementById('habitsJson').value = '';
+            document.getElementById('habitsVideoLink').value = '';
+            document.getElementById('habitsCountries').value = '';
+            document.getElementById('habitsSubcategories').value = '';
+            showStatus('habitsStatus', 'Habits input cleared', 'info');
+        }
+
+        // Utility functions
+        function isValidVideoUrl(url) {
+            try {
+                const urlObj = new URL(url);
+                const validDomains = [
+                    'youtube.com', 'www.youtube.com', 'youtu.be',
+                    'vimeo.com', 'www.vimeo.com',
+                    'dailymotion.com', 'www.dailymotion.com',
+                    'twitch.tv', 'www.twitch.tv',
+                    'tiktok.com', 'www.tiktok.com',
+                    'instagram.com', 'www.instagram.com',
+                    'facebook.com', 'www.facebook.com', 'fb.watch'
+                ];
+                
+                return validDomains.some(domain => 
+                    urlObj.hostname === domain || urlObj.hostname.endsWith('.' + domain)
+                );
+            } catch (error) {
+                return false;
+            }
+        }
+
+        // Tasks functions
+        async function addTasks() {
+            const tasksJson = document.getElementById('tasksJson').value.trim();
+            const videoLink = document.getElementById('tasksVideoLink').value.trim();
+            
+            if (!tasksJson) {
+                showStatus('tasksStatus', 'Please enter tasks JSON data', 'error');
+                return;
+            }
+
+            // Validate video link if provided
+            if (videoLink && !isValidVideoUrl(videoLink)) {
+                showStatus('tasksStatus', 'Invalid video URL format', 'error');
+                return;
+            }
+
+            try {
+                showLoading('tasksLoading', true);
+                
+                // Parse JSON to validate
+                const tasks = JSON.parse(tasksJson);
+                
+                // If single task, wrap in array
+                const tasksArray = Array.isArray(tasks) ? tasks : [tasks];
+                
+                // Add video link to all tasks if provided
+                if (videoLink) {
+                    tasksArray.forEach(task => {
+                        task.videoLink = videoLink;
+                    });
+                }
+                
+                // Validate existing video links in JSON if any
+                for (let i = 0; i < tasksArray.length; i++) {
+                    const task = tasksArray[i];
+                    if (task.videoLink && !isValidVideoUrl(task.videoLink)) {
+                        showStatus('tasksStatus', `Invalid video URL in task ${i + 1}: ${task.videoLink}`, 'error');
+                        return;
+                    }
+                }
+                
+                // Send to API
+                const response = await fetch(`${API_BASE_URL}/tasks/bulk`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ tasks: tasksArray })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    let message = `Successfully added ${result.data.length} task(s)`;
+                    if (result.warnings && result.warnings.length > 0) {
+                        message += `\n\nWarnings:\n${result.warnings.join('\n')}`;
+                    }
+                    showStatus('tasksStatus', message, 'success');
+                } else {
+                    // Check if the error is due to missing habit
+                    if (result.message && result.message.includes('not found')) {
+                        showStatus('tasksStatus', `Error: ${result.message}. Click "🏗️ Create Example Habit" button to create the required habit first.`, 'error');
+                    } else {
+                        showStatus('tasksStatus', `Error: ${result.message || 'Failed to add tasks'}`, 'error');
+                    }
+                }
+            } catch (error) {
+                if (error instanceof SyntaxError) {
+                    showStatus('tasksStatus', 'Invalid JSON format. Please check your syntax.', 'error');
+                } else {
+                    handleApiError(error, 'tasksStatus');
+                }
+            } finally {
+                showLoading('tasksLoading', false);
+            }
+        }
+
+        function loadTasksExample() {
+            const exampleData = {
+                "habitId": "example-habit",
+                "id": "task-1",
+                "title": "Example Task",
+                "description": "This is an example task description",
+                "day": [1, 2, 5],
+                "week": 1,
+                "category": "work",
+                "estimatedTime": "15 minutes",
+                "executionTime": "Morning",
+                "notifyTime": "08:00",
+                "weekGoal": "Complete all daily tasks"
+            };
+            
+            document.getElementById('tasksJson').value = JSON.stringify(exampleData, null, 2);
+        }
+
+        function loadTasksDaysArrayExample() {
+            const exampleData = [
+                {
+                    "habitId": "example-days-array-habit",
+                    "id": "task-1",
+                    "title": "Morning Meditation",
+                    "description": "Start your day with 10 minutes of meditation to center yourself and set positive intentions.",
+                    "day": [1, 3, 5],
+                    "week": 1,
+                    "category": "mindfulness",
+                    "estimatedTime": "10 minutes",
+                    "executionTime": "Morning",
+                    "notifyTime": "07:00",
+                    "weekGoal": "Establish morning routine"
+                },
+                {
+                    "habitId": "example-days-array-habit",
+                    "id": "task-2",
+                    "title": "Exercise",
+                    "description": "Get your body moving with 30 minutes of physical activity.",
+                    "day": [1, 2, 4, 6],
+                    "week": 1,
+                    "category": "fitness",
+                    "estimatedTime": "30 minutes",
+                    "executionTime": "Morning",
+                    "notifyTime": "08:00",
+                    "weekGoal": "Build exercise habit"
+                },
+                {
+                    "habitId": "example-days-array-habit",
+                    "id": "task-3",
+                    "title": "Read for Learning",
+                    "description": "Spend 20 minutes reading educational content or books.",
+                    "day": [2, 4, 6],
+                    "week": 1,
+                    "category": "learning",
+                    "estimatedTime": "20 minutes",
+                    "executionTime": "Evening",
+                    "notifyTime": "19:00",
+                    "weekGoal": "Continuous learning"
+                },
+                {
+                    "habitId": "example-days-array-habit",
+                    "id": "task-4",
+                    "title": "Journal Writing",
+                    "description": "Reflect on your day and write down your thoughts and experiences.",
+                    "day": [1, 2, 3, 4, 5, 6, 7],
+                    "week": 1,
+                    "category": "reflection",
+                    "estimatedTime": "15 minutes",
+                    "executionTime": "Evening",
+                    "notifyTime": "21:00",
+                    "weekGoal": "Daily reflection practice"
+                }
+            ];
+            
+            document.getElementById('tasksJson').value = JSON.stringify(exampleData, null, 2);
+            showStatus('tasksStatus', 'Days array example loaded! This shows tasks that repeat on multiple days (e.g., [1,3,5] means days 1, 3, and 5). Note: Make sure the habit "example-days-array-habit" exists before adding tasks.', 'success');
+        }
+
+        // Helper function to create the example habit if it doesn't exist
+        async function createExampleHabitIfNeeded() {
+            if (!authToken) {
+                showStatus('tasksStatus', 'Please login first to create habits.', 'error');
+                return false;
+            }
+
+            try {
+                const habitData = {
+                    "id": "example-days-array-habit",
+                    "title": "Example Days Array Habit",
+                    "description": "This is an example habit to demonstrate the new days array format for tasks.",
+                    "duration": 7,
+                    "category": "productivity",
+                    "difficulty": "beginner",
+                    "image": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=600&fit=crop",
+                    "isActive": true,
+                    "isFeatured": false,
+                    "sortOrder": 0
+                };
+
+                const response = await fetch(`${API_BASE_URL}/habits/bulk`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ habits: [habitData] })
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showStatus('tasksStatus', 'Example habit created successfully! You can now add tasks.', 'success');
+                    return true;
+                } else {
+                    if (result.message && result.message.includes('already exists')) {
+                        showStatus('tasksStatus', 'Example habit already exists. You can now add tasks.', 'info');
+                        return true;
+                    } else {
+                        showStatus('tasksStatus', `Failed to create example habit: ${result.message}`, 'error');
+                        return false;
+                    }
+                }
+            } catch (error) {
+                showStatus('tasksStatus', `Error creating example habit: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        // Helpers to inject videoLink into current JSON bodies
+        function addHabitVideoToJson() {
+            const input = document.getElementById('habitsVideoLink');
+            const videoLink = input.value.trim();
+            if (!videoLink) return;
+            if (!isValidVideoUrl(videoLink)) {
+                showStatus('habitsStatus', 'Invalid video URL format', 'error');
+                return;
+            }
+            const textarea = document.getElementById('habitsJson');
+            const current = textarea.value.trim();
+            if (!current) {
+                showStatus('habitsStatus', 'Please add JSON first, then press "Add to JSON"', 'info');
+                return;
+            }
+            try {
+                const parsed = JSON.parse(current);
+                const arr = Array.isArray(parsed) ? parsed : [parsed];
+                arr.forEach(h => { h.videoLink = videoLink; });
+                textarea.value = JSON.stringify(Array.isArray(parsed) ? arr : arr[0], null, 2);
+                showStatus('habitsStatus', 'Video link added to JSON body', 'success');
+            } catch {
+                showStatus('habitsStatus', 'Invalid JSON – fix it before adding video link', 'error');
+            }
+        }
+
+        function addTaskVideoToJson() {
+            const input = document.getElementById('tasksVideoLink');
+            const videoLink = input.value.trim();
+            if (!videoLink) return;
+            if (!isValidVideoUrl(videoLink)) {
+                showStatus('tasksStatus', 'Invalid video URL format', 'error');
+                return;
+            }
+            const textarea = document.getElementById('tasksJson');
+            const current = textarea.value.trim();
+            if (!current) {
+                showStatus('tasksStatus', 'Please add JSON first, then press "Add to JSON"', 'info');
+                return;
+            }
+            try {
+                const parsed = JSON.parse(current);
+                const arr = Array.isArray(parsed) ? parsed : [parsed];
+                arr.forEach(t => { t.videoLink = videoLink; });
+                textarea.value = JSON.stringify(Array.isArray(parsed) ? arr : arr[0], null, 2);
+                showStatus('tasksStatus', 'Video link added to JSON body', 'success');
+            } catch {
+                showStatus('tasksStatus', 'Invalid JSON – fix it before adding video link', 'error');
+            }
+        }
+
+        function addHabitCountriesToJson() {
+            const input = document.getElementById('habitsCountries');
+            const countriesInput = input.value.trim();
+            if (!countriesInput) return;
+            
+            const countries = countriesInput.split(',').map(code => code.trim().toUpperCase());
+            if (!countries.every(code => /^[A-Z]{2}$/.test(code))) {
+                showStatus('habitsStatus', 'Invalid country codes. Must be 2-letter ISO codes (e.g., US, CA, GB)', 'error');
+                return;
+            }
+            
+            const textarea = document.getElementById('habitsJson');
+            const current = textarea.value.trim();
+            if (!current) {
+                showStatus('habitsStatus', 'Please add JSON first, then press "Add to JSON"', 'info');
+                return;
+            }
+            try {
+                const parsed = JSON.parse(current);
+                const arr = Array.isArray(parsed) ? parsed : [parsed];
+                arr.forEach(h => { h.countries = countries; });
+                textarea.value = JSON.stringify(Array.isArray(parsed) ? arr : arr[0], null, 2);
+                showStatus('habitsStatus', 'Countries added to JSON body', 'success');
+            } catch {
+                showStatus('habitsStatus', 'Invalid JSON – fix it before adding countries', 'error');
+            }
+        }
+
+        function addHabitSubcategoriesToJson() {
+            const input = document.getElementById('habitsSubcategories');
+            const subcategoriesInput = input.value.trim();
+            if (!subcategoriesInput) return;
+            
+            const subcategories = subcategoriesInput.split(',').map(subcat => subcat.trim());
+            if (!subcategories.every(subcat => subcat.length > 0 && subcat.length <= 50)) {
+                showStatus('habitsStatus', 'Invalid subcategories. Each subcategory must be between 1 and 50 characters', 'error');
+                return;
+            }
+            
+            const textarea = document.getElementById('habitsJson');
+            const current = textarea.value.trim();
+            if (!current) {
+                showStatus('habitsStatus', 'Please add JSON first, then press "Add to JSON"', 'info');
+                return;
+            }
+            try {
+                const parsed = JSON.parse(current);
+                const arr = Array.isArray(parsed) ? parsed : [parsed];
+                arr.forEach(h => { h.subcategories = subcategories; });
+                textarea.value = JSON.stringify(Array.isArray(parsed) ? arr : arr[0], null, 2);
+                showStatus('habitsStatus', 'Subcategories added to JSON body', 'success');
+            } catch {
+                showStatus('habitsStatus', 'Invalid JSON – fix it before adding subcategories', 'error');
+            }
+        }
+
+        function clearTasks() {
+            document.getElementById('tasksJson').value = '';
+            document.getElementById('tasksVideoLink').value = '';
+            showStatus('tasksStatus', 'Tasks input cleared', 'info');
+        }
+
+        // Habit Dashboard Functions
+        async function loadHabitsFromDB() {
+            if (!authToken) {
+                showStatus('habitsDashboardStatus', 'Please login first to load habits from database.', 'error');
+                return;
+            }
+
+            try {
+                document.getElementById('habitsLoadingContainer').style.display = 'flex';
+                
+                // Load habits and categories in parallel (include inactive habits for data manager)
+                const [habitsResponse, categoriesResponse] = await Promise.all([
+                    fetch(`${API_BASE_URL}/habits?includeInactive=true`, {
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }),
+                    fetch(`${API_BASE_URL}/habits/categories`, {
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`,
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                ]);
+
+                if (habitsResponse.ok && categoriesResponse.ok) {
+                    const habitsResult = await habitsResponse.json();
+                    const categoriesResult = await categoriesResponse.json();
+                    
+                    habitsData = habitsResult.data || habitsResult.habits || [];
+                    categoriesData = categoriesResult.data || categoriesResult.categories || [];
+                    
+                    renderHabitsDashboard();
+                    showStatus('habitsDashboardStatus', `Loaded ${habitsData.length} habits from database`, 'success');
+                } else {
+                    const errorText = await habitsResponse.text();
+                    showStatus('habitsDashboardStatus', `Failed to load habits: ${errorText}`, 'error');
+                }
+            } catch (error) {
+                console.error('Error loading habits:', error);
+                showStatus('habitsDashboardStatus', `Error loading habits: ${error.message}`, 'error');
+            } finally {
+                document.getElementById('habitsLoadingContainer').style.display = 'none';
+            }
+        }
+
+        function renderHabitsDashboard() {
+            const dashboard = document.getElementById('habitsDashboard');
+            
+            if (habitsData.length === 0) {
+                dashboard.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎯</div>
+                        <h3>No habits found</h3>
+                        <p>No habits are available in the database. Try adding some habits using the form above.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Group habits by category
+            const categorizedHabits = {};
+            categoriesData.forEach(category => {
+                categorizedHabits[category.name] = {
+                    ...category,
+                    habits: habitsData.filter(habit => habit.category === category.name)
+                };
+            });
+
+            // Add uncategorized habits
+            const uncategorizedHabits = habitsData.filter(habit => 
+                !categoriesData.some(cat => cat.name === habit.category)
+            );
+            if (uncategorizedHabits.length > 0) {
+                categorizedHabits['Uncategorized'] = {
+                    name: 'Uncategorized',
+                    icon: '📁',
+                    color: '#6b7280',
+                    habits: uncategorizedHabits
+                };
+            }
+
+            let html = '';
+            Object.entries(categorizedHabits).forEach(([categoryName, categoryData]) => {
+                if (categoryData.habits.length > 0) {
+                    html += renderCategorySection(categoryName, categoryData);
+                }
+            });
+
+            dashboard.innerHTML = html;
+        }
+
+        function renderCategorySection(categoryName, categoryData) {
+            const viewClass = currentViewMode === 'grid' ? 'habits-grid' : 'habits-list';
+            
+            return `
+                <div class="category-section">
+                    <div class="category-header">
+                        <div class="category-icon" style="background: ${categoryData.color}20; color: ${categoryData.color}">
+                            ${categoryData.icon}
+                        </div>
+                        <h3 class="category-title">${categoryName}</h3>
+                        <span class="category-count">${categoryData.habits.length} habit${categoryData.habits.length !== 1 ? 's' : ''}</span>
+                    </div>
+                    <div class="${viewClass}">
+                        ${categoryData.habits.map(habit => renderHabitCard(habit)).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderHabitCard(habit) {
+            const viewClass = currentViewMode === 'grid' ? 'grid-view' : 'list-view';
+            const imageUrl = habit.image && habit.image.startsWith('http') ? habit.image : 
+                           `https://res.cloudinary.com/your-cloud/image/upload/v1234567890/atome-habits/${habit.image}`;
+            
+            const isInactive = !habit.isActive;
+            const inactiveClass = isInactive ? 'inactive-habit' : '';
+            const statusBadge = isInactive ? '<span class="status-badge inactive">Inactive</span>' : '<span class="status-badge active">Active</span>';
+            
+            return `
+                <div class="habit-card ${viewClass} ${inactiveClass}">
+                    <div class="habit-image-container">
+                        <img src="${imageUrl}" alt="${habit.title}" class="habit-image" 
+                             onerror="this.src='https://via.placeholder.com/200x300/f3f4f6/6b7280?text=No+Image'">
+                        <div class="habit-overlay">
+                            <div class="habit-actions">
+                                <button class="action-btn btn-view" onclick="viewHabit('${habit.id}')" title="View Details">
+                                    👁️
+                                </button>
+                                <button class="action-btn btn-edit" onclick="editHabit('${habit.id}')" title="Edit Habit">
+                                    ✏️
+                                </button>
+                                ${isInactive ? 
+                                    `<button class="action-btn btn-restore" onclick="restoreHabit('${habit.id}')" title="Restore Habit">🔄</button>` :
+                                    `<div class="delete-options">
+                                        <button class="action-btn btn-delete" onclick="deleteHabit('${habit.id}')" title="Soft Delete (Reversible)">🗑️</button>
+                                        <button class="action-btn btn-hard-delete" onclick="showHardDeleteConfirmation('${habit.id}', '${habit.title.replace(/'/g, "\\'")}')" title="Permanent Delete (Irreversible)">💥</button>
+                                    </div>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="habit-info">
+                        <h4 class="habit-title">${habit.title} ${statusBadge}</h4>
+                        <div class="habit-meta">
+                            <span class="habit-category">${habit.category}</span>
+                            <span class="habit-difficulty difficulty-${habit.difficulty}">${habit.difficulty}</span>
+                            <span class="habit-duration">${habit.duration} days</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleViewMode() {
+            currentViewMode = currentViewMode === 'grid' ? 'list' : 'grid';
+            const btn = document.getElementById('viewModeBtn');
+            btn.textContent = currentViewMode === 'grid' ? '📋 List View' : '🔲 Grid View';
+            
+            if (habitsData.length > 0) {
+                renderHabitsDashboard();
+            }
+        }
+
+        function viewHabit(habitId) {
+            const habit = habitsData.find(h => h.id === habitId);
+            if (habit) {
+                alert(`Habit Details:\n\nTitle: ${habit.title}\nDescription: ${habit.description}\nCategory: ${habit.category}\nDifficulty: ${habit.difficulty}\nDuration: ${habit.duration} days`);
+            }
+        }
+
+        function editHabit(habitId) {
+            const habit = habitsData.find(h => h.id === habitId);
+            if (!habit) return;
+
+            editingHabit = habit;
+            
+            // Populate form
+            document.getElementById('editHabitId').value = habit.id;
+            document.getElementById('editHabitTitle').value = habit.title;
+            document.getElementById('editHabitDescription').value = habit.description;
+            document.getElementById('editHabitCategory').value = habit.category;
+            document.getElementById('editHabitDifficulty').value = habit.difficulty;
+            document.getElementById('editHabitDuration').value = habit.duration;
+            document.getElementById('editHabitSortOrder').value = habit.sortOrder || 0;
+            document.getElementById('editHabitImage').value = habit.image || '';
+            document.getElementById('editHabitVideoLink').value = habit.videoLink || '';
+            document.getElementById('editHabitIsActive').checked = habit.isActive || false;
+            document.getElementById('editHabitIsFeatured').checked = habit.isFeatured || false;
+            
+            // Show image preview if URL is provided
+            const imagePreview = document.getElementById('editHabitImagePreview');
+            if (habit.image && habit.image.startsWith('http')) {
+                imagePreview.src = habit.image;
+                imagePreview.style.display = 'block';
+            } else {
+                imagePreview.style.display = 'none';
+            }
+            
+            document.getElementById('editHabitModal').style.display = 'block';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editHabitModal').style.display = 'none';
+            editingHabit = null;
+        }
+
+        async function saveHabitChanges() {
+            if (!editingHabit || !authToken) return;
+
+            try {
+                const updatedHabit = {
+                    ...editingHabit,
+                    title: document.getElementById('editHabitTitle').value,
+                    description: document.getElementById('editHabitDescription').value,
+                    category: document.getElementById('editHabitCategory').value,
+                    difficulty: document.getElementById('editHabitDifficulty').value,
+                    duration: parseInt(document.getElementById('editHabitDuration').value),
+                    sortOrder: parseInt(document.getElementById('editHabitSortOrder').value),
+                    image: document.getElementById('editHabitImage').value,
+                    videoLink: document.getElementById('editHabitVideoLink').value,
+                    isActive: document.getElementById('editHabitIsActive').checked,
+                    isFeatured: document.getElementById('editHabitIsFeatured').checked
+                };
+
+                const response = await fetch(`${API_BASE_URL}/habits/${editingHabit.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedHabit)
+                });
+
+                if (response.ok) {
+                    // Update local data
+                    const index = habitsData.findIndex(h => h.id === editingHabit.id);
+                    if (index !== -1) {
+                        habitsData[index] = updatedHabit;
+                    }
+                    
+                    renderHabitsDashboard();
+                    closeEditModal();
+                    showStatus('habitsDashboardStatus', 'Habit updated successfully!', 'success');
+                } else {
+                    const errorData = await response.json();
+                    showStatus('habitsDashboardStatus', `Failed to update habit: ${errorData.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('Error updating habit:', error);
+                showStatus('habitsDashboardStatus', `Error updating habit: ${error.message}`, 'error');
+            }
+        }
+
+        async function deleteHabit(habitId) {
+            if (!authToken) {
+                showStatus('habitsDashboardStatus', 'Please login first to delete habits.', 'error');
+                return;
+            }
+
+            const habit = habitsData.find(h => h.id === habitId);
+            if (!habit) return;
+
+            if (!confirm(`Are you sure you want to delete "${habit.title}"? This will deactivate the habit and all its tasks. This action can be undone by editing the habit.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/habits/${habitId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    // Remove from local data since it will be filtered out by isActive: false
+                    habitsData = habitsData.filter(h => h.id !== habitId);
+                    renderHabitsDashboard();
+                    showStatus('habitsDashboardStatus', 'Habit deleted successfully! It has been deactivated and will not appear in the app.', 'success');
+                } else {
+                    const errorData = await response.json();
+                    showStatus('habitsDashboardStatus', `Failed to delete habit: ${errorData.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting habit:', error);
+                showStatus('habitsDashboardStatus', `Error deleting habit: ${error.message}`, 'error');
+            }
+        }
+
+        async function restoreHabit(habitId) {
+            if (!authToken) {
+                showStatus('habitsDashboardStatus', 'Please login first to restore habits.', 'error');
+                return;
+            }
+
+            const habit = habitsData.find(h => h.id === habitId);
+            if (!habit) return;
+
+            if (!confirm(`Are you sure you want to restore "${habit.title}"? This will make it active again.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/habits/${habitId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ isActive: true })
+                });
+
+                if (response.ok) {
+                    // Update local data
+                    const index = habitsData.findIndex(h => h.id === habitId);
+                    if (index !== -1) {
+                        habitsData[index].isActive = true;
+                    }
+                    
+                    renderHabitsDashboard();
+                    showStatus('habitsDashboardStatus', 'Habit restored successfully! It is now active again.', 'success');
+                } else {
+                    const errorData = await response.json();
+                    showStatus('habitsDashboardStatus', `Failed to restore habit: ${errorData.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('Error restoring habit:', error);
+                showStatus('habitsDashboardStatus', `Error restoring habit: ${error.message}`, 'error');
+            }
+        }
+
+        // Hard delete functionality
+        let hardDeleteHabitId = null;
+        let hardDeleteHabitTitle = '';
+
+        function showHardDeleteConfirmation(habitId, habitTitle) {
+            hardDeleteHabitId = habitId;
+            hardDeleteHabitTitle = habitTitle;
+            
+            document.getElementById('hardDeleteHabitTitle').textContent = habitTitle;
+            document.getElementById('hardDeleteConfirmationInput').value = '';
+            document.getElementById('confirmHardDeleteBtn').disabled = true;
+            document.getElementById('hardDeleteModal').style.display = 'block';
+            
+            // Focus on the input field
+            document.getElementById('hardDeleteConfirmationInput').focus();
+            
+            // Add event listener for input validation
+            document.getElementById('hardDeleteConfirmationInput').addEventListener('input', validateHardDeleteInput);
+        }
+
+        function validateHardDeleteInput() {
+            const input = document.getElementById('hardDeleteConfirmationInput');
+            const confirmBtn = document.getElementById('confirmHardDeleteBtn');
+            
+            if (input.value.trim() === hardDeleteHabitTitle) {
+                confirmBtn.disabled = false;
+                input.style.borderColor = '#10b981';
+            } else {
+                confirmBtn.disabled = true;
+                input.style.borderColor = '#d1d5db';
+            }
+        }
+
+        function closeHardDeleteModal() {
+            document.getElementById('hardDeleteModal').style.display = 'none';
+            hardDeleteHabitId = null;
+            hardDeleteHabitTitle = '';
+            
+            // Remove event listener
+            document.getElementById('hardDeleteConfirmationInput').removeEventListener('input', validateHardDeleteInput);
+        }
+
+        async function confirmHardDelete() {
+            if (!hardDeleteHabitId || !authToken) {
+                showStatus('habitsDashboardStatus', 'Please login first to delete habits.', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/habits/${hardDeleteHabitId}/hard`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    
+                    // Remove from local data
+                    habitsData = habitsData.filter(h => h.id !== hardDeleteHabitId);
+                    renderHabitsDashboard();
+                    
+                    // Show success message with details
+                    let message = `Habit permanently deleted! Removed ${result.data.deletedTasksCount} tasks`;
+                    if (result.data.deletedImages && result.data.deletedImages.length > 0) {
+                        message += ` and ${result.data.deletedImages.length} image(s) from Cloudinary`;
+                    }
+                    showStatus('habitsDashboardStatus', message, 'success');
+                    
+                    closeHardDeleteModal();
+                } else {
+                    const errorData = await response.json();
+                    showStatus('habitsDashboardStatus', `Failed to permanently delete habit: ${errorData.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('Error permanently deleting habit:', error);
+                showStatus('habitsDashboardStatus', `Error permanently deleting habit: ${error.message}`, 'error');
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const editModal = document.getElementById('editHabitModal');
+            const hardDeleteModal = document.getElementById('hardDeleteModal');
+            
+            if (event.target === editModal) {
+                closeEditModal();
+            } else if (event.target === hardDeleteModal) {
+                closeHardDeleteModal();
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load stored authentication
+            loadStoredAuth();
+            
+            showStatus('habitsStatus', 'Ready to manage habits and tasks!', 'info');
+            showStatus('imageStatus', 'Upload images to use in your habits. Drag & drop or click to select files.', 'info');
+            
+            if (!authToken) {
+                showStatus('loginStatus', 'Please login to access all features including image uploads.', 'info');
+            }
+        });
+    </script>
+</body>
+</html>

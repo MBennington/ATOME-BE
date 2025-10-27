@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CORS Test</title>
+</head>
+<body>
+    <h1>CORS Test</h1>
+    <button onclick="testCors()">Test CORS</button>
+    <div id="result"></div>
+
+    <script>
+        async function testCors() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing...';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/health');
+                const data = await response.json();
+                resultDiv.innerHTML = `<p style="color: green;">✅ CORS Test Passed! Response: ${data.message}</p>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color: red;">❌ CORS Test Failed: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
