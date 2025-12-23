@@ -12,6 +12,7 @@ const imageRoutes = require('./images');
 const tunnelRoutes = require('./tunnel');
 const savedCollectionsRoutes = require('./savedCollectionsRoutes');
 const preferencesRoutes = require('./preferences');
+const ratingsRoutes = require('./ratings');
 
 // Health check endpoint
 router.get('/health', (req, res) => {
@@ -33,6 +34,7 @@ router.use('/images', imageRoutes);
 router.use('/tunnel', tunnelRoutes);
 router.use('/saved-collections', savedCollectionsRoutes);
 router.use('/preferences', preferencesRoutes);
+router.use('/ratings', ratingsRoutes);
 router.use('/notes', (req, res, next) => {
   console.log('Notes routes mounted, request to:', req.path, req.method);
   next();
@@ -113,6 +115,11 @@ router.get('/', (req, res) => {
                unsave: 'DELETE /api/saved-collections/:habitId (Private)',
                getAll: 'GET /api/saved-collections (Private)',
                check: 'GET /api/saved-collections/check/:habitId (Private)'
+             },
+             ratings: {
+               submit: 'POST /api/ratings/submit (Private)',
+               getHabitRating: 'GET /api/ratings/habit/:habitId (Private)',
+               getHabitRatings: 'GET /api/ratings/habit/:habitId/all (Public)'
              }
     }
   });

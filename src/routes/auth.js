@@ -8,7 +8,8 @@ const {
   changePassword,
   uploadAvatar,
   deleteAvatar,
-  logout
+  logout,
+  deleteAccount
 } = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
 const { uploadSingle } = require('../middleware/upload');
@@ -29,5 +30,6 @@ router.put('/change-password', protect, changePassword);
 router.post('/upload-avatar', protect, uploadSingle('avatar'), uploadAvatar);
 router.delete('/delete-avatar', protect, deleteAvatar);
 router.post('/logout', protect, logout);
+router.delete('/delete-account', protect, deleteAccount);
 
 module.exports = router;

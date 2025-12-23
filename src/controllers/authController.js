@@ -367,6 +367,76 @@ const logout = async (req, res, next) => {
   }
 };
 
+// @desc    Delete user account and all related data
+// @route   DELETE /api/auth/delete-account
+// @access  Private
+const deleteAccount = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    const userId = user._id;
+    const userName = user.name;
+
+    // Delete user's avatar from Cloudinary if exists
+    if (user.avatar) {
+      try {
+        const urlParts = user.avatar.split('/');
+        const publicId = urlParts[urlParts.length - 1].split('.')[0];
+        await deleteFromCloudinary(publicId);
+      } catch (error) {
+        console.error('Error deleting avatar from Cloudinary:', error);
+        // Continue with account deletion even if avatar deletion fails
+      }
+    }
+
+    // Delete all user's notes
+    const Note = require('../models/Note');
+    await Note.deleteMany({ user: userId });
+
+    // Anonymize user's ratings instead of deleting them
+    // This preserves reviews for collections even after account deletion
+    const HabitRating = require('../models/HabitRating');
+    await HabitRating.updateMany(
+      { user: userId },
+      {
+        $set: {
+          user: null,
+          isAnonymized: true
+          // userName and userAvatar are already stored, so they remain
+        }
+      }
+    );
+
+    // Delete user preferences
+    const UserPreferences = require('../models/UserPreferences');
+    await UserPreferences.deleteOne({ userId: userId });
+
+    // Remove user from engagedUsers in all habits
+    const Habit = require('../models/Habit');
+    await Habit.updateMany(
+      { 'engagedUsers.userId': userId.toString() },
+      { $pull: { engagedUsers: { userId: userId.toString() } } }
+    );
+
+    // Delete the user account
+    await User.findByIdAndDelete(userId);
+
+    res.status(200).json({
+      success: true,
+      message: 'Account and all related data deleted successfully'
+    });
+  } catch (error) {
+    console.error('Error deleting account:', error);
+    next(error);
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -375,5 +445,6 @@ module.exports = {
   changePassword,
   uploadAvatar,
   deleteAvatar,
-  logout
+  logout,
+  deleteAccount
 };

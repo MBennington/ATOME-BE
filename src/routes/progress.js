@@ -10,7 +10,8 @@ const {
   getHabitProgress,
   getUserStats,
   getTodayTasks,
-  getHabitUsers
+  getHabitUsers,
+  getMoonstonesCount
 } = require('../controllers/progressController');
 const { protect } = require('../middleware/auth');
 
@@ -21,8 +22,10 @@ router.use(protect);
 router.get('/active-habits', getActiveHabits);
 router.get('/today-tasks', getTodayTasks);
 router.get('/stats', getUserStats);
-router.get('/habit/:habitId', getHabitProgress);
+router.get('/moonstones', getMoonstonesCount);
+// Parameterized routes must come after static routes
 router.get('/habit/:habitId/users', getHabitUsers);
+router.get('/habit/:habitId', getHabitProgress);
 
 // Habit management routes
 router.post('/start-habit', startHabit);

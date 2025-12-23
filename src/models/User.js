@@ -127,7 +127,12 @@ const userSchema = new mongoose.Schema({
       type: Date,
       default: Date.now
     }
-  }]
+  }],
+  moonstonesCount: {
+    type: Number,
+    default: 0,
+    min: 0
+  }
 }, {
   timestamps: true
 });
@@ -263,6 +268,9 @@ userSchema.methods.completeTask = async function(habitId, day, taskData = {}) {
     activeHabit.isCompleted = true;
     activeHabit.isActive = false; // Mark as inactive so it doesn't appear in active habits
     activeHabit.completedAt = new Date();
+    
+    // Increment moonstones count for completed habit
+    this.moonstonesCount = (this.moonstonesCount || 0) + 1;
     
     // Update engaged users progress to 100%
     await this.updateEngagedUsersProgress(habitId, 100);

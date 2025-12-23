@@ -19,7 +19,44 @@ const getActiveHabits = async (req, res, next) => {
       });
     }
 
-    const activeHabits = user.activeHabits.filter(habit => habit.isActive);
+    let activeHabits = user.activeHabits.filter(habit => habit.isActive);
+    
+    // Filter out expired habits and mark them as inactive
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const expiredHabitIds = [];
+    activeHabits = activeHabits.filter(activeHabit => {
+      if (!activeHabit.habit || !activeHabit.habit.duration) {
+        return true; // Keep if no duration info
+      }
+      
+      const startDate = new Date(activeHabit.startDate);
+      startDate.setHours(0, 0, 0, 0);
+      const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+      const duration = activeHabit.habit.duration;
+      
+      // Check if habit has expired (days since start > duration)
+      if (daysSinceStart > duration) {
+        expiredHabitIds.push(activeHabit.habitId);
+        return false; // Filter out expired habits
+      }
+      
+      return true;
+    });
+    
+    // Mark expired habits as inactive in the database
+    if (expiredHabitIds.length > 0) {
+      expiredHabitIds.forEach(habitId => {
+        const habitIndex = user.activeHabits.findIndex(h => 
+          h.habitId === habitId && h.isActive
+        );
+        if (habitIndex !== -1) {
+          user.activeHabits[habitIndex].isActive = false;
+        }
+      });
+      await user.save({ validateBeforeSave: false });
+    }
 
     // Get today's task for each active habit
     const habitsWithTodayTask = await Promise.all(
@@ -624,7 +661,44 @@ const getTodayTasks = async (req, res, next) => {
       });
     }
 
-    const activeHabits = user.activeHabits.filter(habit => habit.isActive);
+    let activeHabits = user.activeHabits.filter(habit => habit.isActive);
+    
+    // Filter out expired habits and mark them as inactive
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const expiredHabitIds = [];
+    activeHabits = activeHabits.filter(activeHabit => {
+      if (!activeHabit.habit || !activeHabit.habit.duration) {
+        return true; // Keep if no duration info
+      }
+      
+      const startDate = new Date(activeHabit.startDate);
+      startDate.setHours(0, 0, 0, 0);
+      const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+      const duration = activeHabit.habit.duration;
+      
+      // Check if habit has expired (days since start > duration)
+      if (daysSinceStart > duration) {
+        expiredHabitIds.push(activeHabit.habitId);
+        return false; // Filter out expired habits
+      }
+      
+      return true;
+    });
+    
+    // Mark expired habits as inactive in the database
+    if (expiredHabitIds.length > 0) {
+      expiredHabitIds.forEach(habitId => {
+        const habitIndex = user.activeHabits.findIndex(h => 
+          h.habitId === habitId && h.isActive
+        );
+        if (habitIndex !== -1) {
+          user.activeHabits[habitIndex].isActive = false;
+        }
+      });
+      await user.save({ validateBeforeSave: false });
+    }
     
     const todayTasks = await Promise.all(
       activeHabits.map(async (activeHabit) => {
@@ -801,6 +875,30 @@ const getHabitUsers = async (req, res, next) => {
   }
 };
 
+// @desc    Get user's moonstones count
+// @route   GET /api/progress/moonstones
+// @access  Private
+const getMoonstonesCount = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        moonstonesCount: user.moonstonesCount || 0
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getActiveHabits,
   startHabit,
@@ -811,5 +909,6 @@ module.exports = {
   getHabitProgress,
   getUserStats,
   getTodayTasks,
-  getHabitUsers
+  getHabitUsers,
+  getMoonstonesCount
 };
