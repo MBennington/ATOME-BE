@@ -90,6 +90,23 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('combined'));
 }
 
+// Root route handler
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'ATOME Backend API',
+    version: '1.0.0',
+    api: '/api',
+    health: '/api/health',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Favicon handler (prevent 404 errors for favicon requests)
+app.get('/favicon.ico', (req, res) => {
+  res.status(204).end();
+});
+
 // API routes
 app.use('/api', routes);
 
